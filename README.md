@@ -2,6 +2,10 @@
 
 How much of your **Claude** and **ChatGPT Codex** subscription quota is left, and when it resets, in one command:
 
+![ai-usage status demo](docs/demo.gif)
+
+<details><summary>Plain text</summary>
+
 ```text
 $ python3 collector.py status
 Claude
@@ -10,6 +14,8 @@ Claude
 Codex · Pro Lite
   weekly   ████░░░░░░   35% left · resets in 4d 23h
 ```
+
+</details>
 
 - **Zero dependencies.** The collector is a single Python 3.11+ file that uses only the standard library.
 - **It never uses your quota.** It reads the numbers your Claude Code and Codex CLIs already report. It never starts an AI turn.
