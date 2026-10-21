@@ -78,7 +78,7 @@ Template: [feature-spec.md](https://github.com/bookchaowalit/architecture-docs/b
 
 | NFR | Target | How it is tested |
 |---|---|---|
-| Performance | CI `api` job time grows by under 30 s | Compare job durations before and after |
+| Performance | CI `api` job time grows by under 30 s | Compare job durations before and after: 11 s on `main` (2026-10-18) and 11 s with the gate |
 | Security / privacy | N/A — no data, secrets or permissions change | — |
 | Reliability / observability | Gate fails closed when coverage data is missing (v1.1.0 behaviour) | Covered by the central self-test and local runs in platform-ci-workflows#2 |
 | Accessibility / UX | N/A — no UI | — |
@@ -95,8 +95,8 @@ Template: [feature-spec.md](https://github.com/bookchaowalit/architecture-docs/b
 | Scenario | Test | Red: commit / run + failure message | Green: commit / run | Refactor note |
 |---|---|---|---|---|
 | AC-01 | CI `api` job, threshold 90 | `e5b739e` / [run](https://github.com/bookchaowalit/platform-ai-usage-api/actions/runs/39534812491/job/119008892655) · `Total coverage is below the 90% threshold` (TOTAL 751 stmts, 128 miss, 83%; 68 tests passed) | — (expected red: the scenario is the failure) | none |
-| AC-02 | CI `api` job, threshold 80 | `e5b739e` / [run](https://github.com/bookchaowalit/platform-ai-usage-api/actions/runs/39534812491/job/119008892655) (same build and data, gate fails at 90) | [green run] | none |
-| AC-03 | AC-02 job summary | — | [green run] | none |
+| AC-02 | CI `api` job, threshold 80 | `e5b739e` / [run](https://github.com/bookchaowalit/platform-ai-usage-api/actions/runs/39534812491/job/119008892655) (same build and data, gate fails at 90) | `ec4242e` / [run](https://github.com/bookchaowalit/platform-ai-usage-api/actions/runs/39534900412/job/119009178033) · TOTAL 83% ≥ 80 | none |
+| AC-03 | AC-02 job summary | — | `ec4242e` / [run](https://github.com/bookchaowalit/platform-ai-usage-api/actions/runs/39534900412/job/119009178033) · report lists only `collector.py`, `model.py`, `server.py` | none |
 
 ## 7. Risks and open questions
 
