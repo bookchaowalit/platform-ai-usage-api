@@ -78,7 +78,7 @@ Template: [feature-spec.md](https://github.com/bookchaowalit/architecture-docs/b
 
 | NFR | Target | How it is tested |
 |---|---|---|
-| Performance | CI `api` job time grows by under 30 s | Compare job durations before and after: 11 s on `main` (2026-10-18) and 11 s with the gate |
+| Performance | CI `api` job time grows by under 30 s | Compare job durations before and after: 11 s on `main` (2026-10-18), 11–14 s with the gate |
 | Security / privacy | N/A — no data, secrets or permissions change | — |
 | Reliability / observability | Gate fails closed when coverage data is missing (v1.1.0 behaviour) | Covered by the central self-test and local runs in platform-ci-workflows#2 |
 | Accessibility / UX | N/A — no UI | — |
