@@ -15,3 +15,7 @@ py-modules = ["server", "model", "collector"]
 [tool.ruff]
 # Vendored copy of bookchaowalit/platform-auth-sdk: "do not edit here" (vendor/service-auth/README.md).
 extend-exclude = ["vendor"]
+
+[tool.coverage.run]
+# Measure only this service's modules, not tests or the vendored SDK (CI coverage gate, ADR-0004).
+source = ["server", "model", "collector"]
