@@ -4,3 +4,6 @@ build/
 .pytest_cache/
 .env
 node_modules/
+.coverage
+.coverage.*
+coverage/
