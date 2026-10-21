@@ -68,7 +68,7 @@ Template: `templates/sdlc/feature-spec.md`. Both live in the owner's private `ar
 
 | Interface | Change | Contract |
 |---|---|---|
-| `.github/workflows/ci.yml` | changed | `ci-python.yml` / `security.yml` pinned to v1.1.0 (`ff310ae`); `coverage-threshold: "82"` |
+| `.github/workflows/ci.yml` | changed | `ci-python.yml` / `security.yml` pinned to v1.1.1 (`87dc5e1`; was v1.1.0 `ff310ae`); `coverage-threshold: "82"` |
 | `pyproject.toml` | changed | `[tool.coverage.run] source` |
 
 - **Data model / migration:** N/A — no schema or runtime change.
@@ -122,6 +122,7 @@ Template: `templates/sdlc/feature-spec.md`. Both live in the owner's private `ar
 | 0.1 | 2026-10-21 | First draft | all | — |
 | 0.2 | 2026-10-21 | Threshold 80 → 82 after ADR-0004 dropped the 80% cap; exceptions 1–3 recorded after the independent review | AC-02, AC-03 | Owner / 2026-10-21 |
 | 1.0 | 2026-10-21 | Approved by owner with exceptions 1–3; status implemented (PR #3 merged) | all | Owner / 2026-10-21 |
+| 1.0.1 | 2026-10-21 | Pin bumped to platform-ci-workflows v1.1.1: the v1.1.0 Python gate compared rounded coverage (79.5% passed 80%). No scope or behaviour change for this repo (82.95% vs 82 passes either way), so no re-approval | AC-01, AC-02 | not required (dependency fix) |
 
 ## Approval
 
