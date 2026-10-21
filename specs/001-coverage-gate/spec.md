@@ -9,8 +9,8 @@ description: "Turn on the platform-ci-workflows v1.1.0 coverage gate for this se
 
 # SPEC-001 — CI coverage gate (TDD + SDD pilot)
 
-Standard: [ADR-0004 — TDD + SDD](https://github.com/bookchaowalit/architecture-docs/blob/main/docs/architecture/decisions/ADR-0004-tdd-sdd-standard.md).
-Template: [feature-spec.md](https://github.com/bookchaowalit/architecture-docs/blob/main/templates/sdlc/feature-spec.md).
+Standard: ADR-0004 — TDD + SDD (`docs/architecture/decisions/ADR-0004-tdd-sdd-standard.md`).
+Template: `templates/sdlc/feature-spec.md`. Both live in the owner's private `architecture-docs` repository.
 
 ## Document control
 
@@ -51,7 +51,7 @@ Template: [feature-spec.md](https://github.com/bookchaowalit/architecture-docs/b
 ### AC-02 — Coverage at or above the threshold passes CI
 
 - **Requirement:** ADR-0004 rule 4 (threshold = current coverage rounded down)
-- **Given** total coverage is 82.95% (shown as 83%)
+- **Given** total coverage is 82.96% (shown as 83%)
 - **When** CI runs with `coverage-threshold: "82"`
 - **Then** the `api` job passes and the job summary shows the coverage table
 - **Test:** CI run of commit "ci: coverage gate at 82 ..." · level: CI
@@ -68,7 +68,7 @@ Template: [feature-spec.md](https://github.com/bookchaowalit/architecture-docs/b
 
 | Interface | Change | Contract |
 |---|---|---|
-| `.github/workflows/ci.yml` | changed | `ci-python.yml` / `security.yml` pinned to v1.1.0 (`ff310ae`); `coverage-threshold: "82"` |
+| `.github/workflows/ci.yml` | changed | `ci-python.yml` / `security.yml` pinned to v1.1.1 (`87dc5e1`; was v1.1.0 `ff310ae`); `coverage-threshold: "82"` |
 | `pyproject.toml` | changed | `[tool.coverage.run] source` |
 
 - **Data model / migration:** N/A — no schema or runtime change.
@@ -87,7 +87,7 @@ Template: [feature-spec.md](https://github.com/bookchaowalit/architecture-docs/b
 
 - **Test levels:** CI runs are the tests for this change (the change is CI configuration).
 - **Test data:** the existing 68-test suite.
-- **Coverage:** `coverage-threshold: "82"`; baseline 82.95% (collector 74%, model 97%, server 80%).
+- **Coverage:** `coverage-threshold: "82"`; baseline 82.96% (collector 74%, model 97%, server 80%).
 - **Not test-first (exceptions):** recorded in the change log (v0.2); **approved by the owner on 2026-10-21** (DoD exceptions table below):
   1. **Implementation before spec approval.** The red and green commits came after the spec commit but before owner approval, because ADR-0004 itself was still `proposed` and the owner asked for the pilot directly. The owner approved the spec and the implementation together after PR #3 merged (2026-10-21).
   2. **AC-03 has no red run.** Scoping (`[tool.coverage.run] source`) landed in the same commit as the threshold-90 run, so no run shows tests or `vendor/` being measured. Replacement check: the green run's report lists exactly the three modules.
@@ -98,7 +98,7 @@ Template: [feature-spec.md](https://github.com/bookchaowalit/architecture-docs/b
 | Scenario | Test | Red: commit / run + failure message | Green: commit / run | Refactor note |
 |---|---|---|---|---|
 | AC-01 | CI `api` job, threshold 90 | `e5b739e` / [run](https://github.com/bookchaowalit/platform-ai-usage-api/actions/runs/39534812491/job/119008892655) · `Total coverage is below the 90% threshold` (TOTAL 751 stmts, 128 miss, 83%; 68 tests passed) | — (expected red: the scenario is the failure) | none |
-| AC-02 | CI `api` job, threshold 82 | `e5b739e` / [run](https://github.com/bookchaowalit/platform-ai-usage-api/actions/runs/39534812491/job/119008892655) (same build and data, gate fails at 90) | `87f8b33` / [run](https://github.com/bookchaowalit/platform-ai-usage-api/actions/runs/39535338340/job/119010573412) · TOTAL 83% (82.95) ≥ 82; also green at 80 in `ec4242e` | none |
+| AC-02 | CI `api` job, threshold 82 | `e5b739e` / [run](https://github.com/bookchaowalit/platform-ai-usage-api/actions/runs/39534812491/job/119008892655) (same build and data, gate fails at 90) | `87f8b33` / [run](https://github.com/bookchaowalit/platform-ai-usage-api/actions/runs/39535338340/job/119010573412) · TOTAL 83% (82.96) ≥ 82; also green at 80 in `ec4242e` | none |
 | AC-03 | AC-02 job summary | — (exception 2) | `87f8b33` / [run](https://github.com/bookchaowalit/platform-ai-usage-api/actions/runs/39535338340/job/119010573412) · report lists only `collector.py`, `model.py`, `server.py` | none |
 
 ### DoD exceptions
@@ -122,6 +122,7 @@ Template: [feature-spec.md](https://github.com/bookchaowalit/architecture-docs/b
 | 0.1 | 2026-10-21 | First draft | all | — |
 | 0.2 | 2026-10-21 | Threshold 80 → 82 after ADR-0004 dropped the 80% cap; exceptions 1–3 recorded after the independent review | AC-02, AC-03 | Owner / 2026-10-21 |
 | 1.0 | 2026-10-21 | Approved by owner with exceptions 1–3; status implemented (PR #3 merged) | all | Owner / 2026-10-21 |
+| 1.0.1 | 2026-10-21 | Pin bumped to platform-ci-workflows v1.1.1: the v1.1.0 Python gate compared rounded coverage (79.5% passed 80%). No scope or behaviour change for this repo (82.96% vs 82 passes either way), so no re-approval | AC-01, AC-02 | not required (dependency fix) |
 
 ## Approval
 
