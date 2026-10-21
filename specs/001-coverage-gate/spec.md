@@ -78,7 +78,7 @@ Template: `templates/sdlc/feature-spec.md`. Both live in the owner's private `ar
 
 | NFR | Target | How it is tested |
 |---|---|---|
-| Performance | CI `api` job time grows by under 30 s | Compare job durations before and after: 11 s on `main` (2026-10-18), 11–14 s with the gate |
+| Performance | CI `api` job time grows by under 30 s | Compare job durations before and after: 11 s on `main` (run 39098905250, 2026-10-18); 10–17 s across the 12 runs with the gate on 2026-10-21, so at most +6 s (GitHub API job timings, recorded in the owner's PRJ-TDD-01 evidence E-06) |
 | Security / privacy | N/A — no data, secrets or permissions change | — |
 | Reliability / observability | Gate fails closed when coverage data is missing (v1.1.0 behaviour) | Covered by the central self-test and local runs in platform-ci-workflows#2 |
 | Accessibility / UX | N/A — no UI | — |
@@ -123,6 +123,7 @@ Template: `templates/sdlc/feature-spec.md`. Both live in the owner's private `ar
 | 0.2 | 2026-10-21 | Threshold 80 → 82 after ADR-0004 dropped the 80% cap; exceptions 1–3 recorded after the independent review | AC-02, AC-03 | Owner / 2026-10-21 |
 | 1.0 | 2026-10-21 | Approved by owner with exceptions 1–3; status implemented (PR #3 merged) | all | Owner / 2026-10-21 |
 | 1.0.1 | 2026-10-21 | Pin bumped to platform-ci-workflows v1.1.1: the v1.1.0 Python gate compared rounded coverage (79.5% passed 80%). No scope or behaviour change for this repo (82.96% vs 82 passes either way), so no re-approval | AC-01, AC-02 | not required (dependency fix) |
+| 1.0.2 | 2026-10-21 | Evidence correction: CI time with the gate is 10–17 s over 12 runs (was "11–14 s", copied from two runs). Wording only; result unchanged (< 30 s) | NFR performance row | not required (evidence correction) |
 
 ## Approval
 
