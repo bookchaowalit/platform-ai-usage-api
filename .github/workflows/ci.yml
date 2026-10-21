@@ -22,7 +22,7 @@ jobs:
       # solo-empire-service-auth is not on PyPI: install the vendored copy first, as the Dockerfile does.
       install-command: uv pip install ./vendor/service-auth -e . pytest
       # pytest (auto) also collects the vendored package's tests under vendor/service-auth/tests.
-      # Coverage gate (TDD + SDD standard, ADR-0004). Baseline 2026-10-21: 82.95% total, rounded down. Ratchet up, never lower.
+      # Coverage gate (TDD + SDD standard, ADR-0004). Baseline 2026-10-21: 82.96% total, rounded down. Ratchet up, never lower.
       coverage-threshold: "82"
 
   security:
