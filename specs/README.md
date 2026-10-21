@@ -8,4 +8,4 @@ and approved before implementation, and each scenario is built test-first
 
 | Spec | Title | Status |
 |---|---|---|
-| [001](001-coverage-gate/spec.md) | CI coverage gate (TDD + SDD pilot) | in review |
+| [001](001-coverage-gate/spec.md) | CI coverage gate (TDD + SDD pilot) | implemented (approved 2026-10-21) |

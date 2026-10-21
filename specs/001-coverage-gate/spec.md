@@ -1,6 +1,6 @@
 ---
 title: "SPEC-001 — CI coverage gate (TDD + SDD pilot)"
-status: in review
+status: implemented
 tags: [spec, sdd, tdd, ci, coverage]
 created: 2026-10-21
 updated: 2026-10-21
@@ -16,15 +16,15 @@ Template: [feature-spec.md](https://github.com/bookchaowalit/architecture-docs/b
 
 | Field | Value |
 |---|---|
-| Spec ID / version | SPEC-001 / 0.2 |
-| Status | in review |
+| Spec ID / version | SPEC-001 / 1.0 |
+| Status | **implemented** (approved by owner 2026-10-21) |
 | Repository / path | bookchaowalit/platform-ai-usage-api / `specs/001-coverage-gate/spec.md` |
 | Owner (maker) | Claude Code |
 | Reviewer (checker) | Fresh Claude reviewer session |
 | Approver | Owner (bookchaowalit) |
 | Requirement links | Owner request 2026-10-21 ("Pilot it on one repo first"); ADR-0004 rule 4 |
 | Related docs | [platform-ci-workflows v1.1.0](https://github.com/bookchaowalit/platform-ci-workflows/releases/tag/v1.1.0) |
-| Created / approved | 2026-10-21 / pending |
+| Created / approved | 2026-10-21 / 2026-10-21 |
 
 ## 1. Problem and intent
 
@@ -88,8 +88,8 @@ Template: [feature-spec.md](https://github.com/bookchaowalit/architecture-docs/b
 - **Test levels:** CI runs are the tests for this change (the change is CI configuration).
 - **Test data:** the existing 68-test suite.
 - **Coverage:** `coverage-threshold: "82"`; baseline 82.95% (collector 74%, model 97%, server 80%).
-- **Not test-first (exceptions):** recorded in the change log (v0.2) and pending the owner's DoD exception approval:
-  1. **Implementation before spec approval.** The red and green commits came after the spec commit but before owner approval, because ADR-0004 itself is still `proposed` and the owner asked for the pilot directly. The owner approves the spec and the implementation together on PR #3.
+- **Not test-first (exceptions):** recorded in the change log (v0.2); **approved by the owner on 2026-10-21** (DoD exceptions table below):
+  1. **Implementation before spec approval.** The red and green commits came after the spec commit but before owner approval, because ADR-0004 itself was still `proposed` and the owner asked for the pilot directly. The owner approved the spec and the implementation together after PR #3 merged (2026-10-21).
   2. **AC-03 has no red run.** Scoping (`[tool.coverage.run] source`) landed in the same commit as the threshold-90 run, so no run shows tests or `vendor/` being measured. Replacement check: the green run's report lists exactly the three modules.
   3. **The red commit contains configuration as well as the "test".** For a config-only change the CI run is the test, so the pin and scoping ship with the first run.
 
@@ -100,6 +100,14 @@ Template: [feature-spec.md](https://github.com/bookchaowalit/architecture-docs/b
 | AC-01 | CI `api` job, threshold 90 | `e5b739e` / [run](https://github.com/bookchaowalit/platform-ai-usage-api/actions/runs/39534812491/job/119008892655) · `Total coverage is below the 90% threshold` (TOTAL 751 stmts, 128 miss, 83%; 68 tests passed) | — (expected red: the scenario is the failure) | none |
 | AC-02 | CI `api` job, threshold 82 | `e5b739e` / [run](https://github.com/bookchaowalit/platform-ai-usage-api/actions/runs/39534812491/job/119008892655) (same build and data, gate fails at 90) | `87f8b33` / [run](https://github.com/bookchaowalit/platform-ai-usage-api/actions/runs/39535338340/job/119010573412) · TOTAL 83% (82.95) ≥ 82; also green at 80 in `ec4242e` | none |
 | AC-03 | AC-02 job summary | — (exception 2) | `87f8b33` / [run](https://github.com/bookchaowalit/platform-ai-usage-api/actions/runs/39535338340/job/119010573412) · report lists only `collector.py`, `model.py`, `server.py` | none |
+
+### DoD exceptions
+
+| Item | Criterion waived | Reason | Approved by | Follow-up |
+|---|---|---|---|---|
+| SPEC-001 | Spec approved before any implementation commit (DoR) | Pilot of a standard that was itself still `proposed`; owner asked for the pilot directly | Owner (bookchaowalit) / 2026-10-21 | None; later specs are approved before code |
+| SPEC-001 AC-03 | Red run before green (test-first) | Coverage scoping shipped in the first CI run; replacement check: the green run's report lists exactly the three modules | Owner (bookchaowalit) / 2026-10-21 | None |
+| SPEC-001 | Red commit contains only the test | Config-only change: the CI run is the test, so the pin and scoping ship with it | Owner (bookchaowalit) / 2026-10-21 | None |
 
 ## 7. Risks and open questions
 
@@ -112,12 +120,14 @@ Template: [feature-spec.md](https://github.com/bookchaowalit/architecture-docs/b
 | Version | Date | Change | Scenarios affected | Approved by |
 |---|---|---|---|---|
 | 0.1 | 2026-10-21 | First draft | all | — |
-| 0.2 | 2026-10-21 | Threshold 80 → 82 after ADR-0004 dropped the 80% cap; exceptions 1–3 recorded after the independent review | AC-02, AC-03 | pending owner |
+| 0.2 | 2026-10-21 | Threshold 80 → 82 after ADR-0004 dropped the 80% cap; exceptions 1–3 recorded after the independent review | AC-02, AC-03 | Owner / 2026-10-21 |
+| 1.0 | 2026-10-21 | Approved by owner with exceptions 1–3; status implemented (PR #3 merged) | all | Owner / 2026-10-21 |
 
 ## Approval
 
 | Gate | Role | Name / date | Decision | Evidence |
 |---|---|---|---|---|
 | Spec ready (before code, DoR) | Reviewer (checker) | Fresh Claude reviewer session / 2026-10-21 | revise → fixed in v0.2 (1 blocking: missing exception record; 3 non-blocking) | PR #3 description |
-| Spec ready (before code, DoR) | Approver | Owner / pending | pending | — |
+| Spec ready (before code, DoR) | Approver | Owner (bookchaowalit) / 2026-10-21 | **approve** (after implementation, exception 1) | Owner message in the Claude Code session, 2026-10-21: "Approve ADR-0004 (G6) and the 3 exceptions in SPEC-001." |
 | Implemented (DoD) | Reviewer (checker) | Fresh Claude reviewer session / 2026-10-21 | pass: config correct, red before green, evidence recorded | [PR #3](https://github.com/bookchaowalit/platform-ai-usage-api/pull/3), [green run](https://github.com/bookchaowalit/platform-ai-usage-api/actions/runs/39535338340/job/119010573412) |
+| Implemented (DoD) | Approver | Owner (bookchaowalit) / 2026-10-21 | **approve** with DoD exceptions 1–3 | Same owner message; [PR #3](https://github.com/bookchaowalit/platform-ai-usage-api/pull/3) |
