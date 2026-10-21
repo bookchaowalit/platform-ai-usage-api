@@ -9,8 +9,8 @@ description: "Turn on the platform-ci-workflows v1.1.0 coverage gate for this se
 
 # SPEC-001 — CI coverage gate (TDD + SDD pilot)
 
-Standard: [ADR-0004 — TDD + SDD](https://github.com/bookchaowalit/architecture-docs/blob/main/docs/architecture/decisions/ADR-0004-tdd-sdd-standard.md).
-Template: [feature-spec.md](https://github.com/bookchaowalit/architecture-docs/blob/main/templates/sdlc/feature-spec.md).
+Standard: ADR-0004 — TDD + SDD (`docs/architecture/decisions/ADR-0004-tdd-sdd-standard.md`).
+Template: `templates/sdlc/feature-spec.md`. Both live in the owner's private `architecture-docs` repository.
 
 ## Document control
 
