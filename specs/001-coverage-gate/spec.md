@@ -94,8 +94,8 @@ Template: [feature-spec.md](https://github.com/bookchaowalit/architecture-docs/b
 
 | Scenario | Test | Red: commit / run + failure message | Green: commit / run | Refactor note |
 |---|---|---|---|---|
-| AC-01 | CI `api` job, threshold 90 | [red run] | — (expected red: the scenario is the failure) | none |
-| AC-02 | CI `api` job, threshold 80 | AC-01 run (same build, gate fails at 90) | [green run] | none |
+| AC-01 | CI `api` job, threshold 90 | `e5b739e` / [run](https://github.com/bookchaowalit/platform-ai-usage-api/actions/runs/39534812491/job/119008892655) · `Total coverage is below the 90% threshold` (TOTAL 751 stmts, 128 miss, 83%; 68 tests passed) | — (expected red: the scenario is the failure) | none |
+| AC-02 | CI `api` job, threshold 80 | `e5b739e` / [run](https://github.com/bookchaowalit/platform-ai-usage-api/actions/runs/39534812491/job/119008892655) (same build and data, gate fails at 90) | [green run] | none |
 | AC-03 | AC-02 job summary | — | [green run] | none |
 
 ## 7. Risks and open questions
