@@ -9,6 +9,7 @@ are stored. Collection never starts an AI turn or redeems a reset credit.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 import math
 import os
@@ -61,7 +62,7 @@ def window(
     duration: int | None,
     *,
     codex: bool = False,
-) -> dict | None:
+) -> dict[str, Any] | None:
     if not isinstance(value, dict):
         return None
     percent = number(value.get("usedPercent" if codex else "used_percentage"), 100)
@@ -80,7 +81,7 @@ def window(
     }
 
 
-def claude_snapshot(payload: Any) -> dict:
+def claude_snapshot(payload: Any) -> dict[str, Any]:
     if not isinstance(payload, dict):
         raise CollectionError("invalid_claude_statusline")
     rates = payload.get("rate_limits")
@@ -111,7 +112,7 @@ def claude_snapshot(payload: Any) -> dict:
     }
 
 
-def codex_snapshot(payload: Any) -> dict:
+def codex_snapshot(payload: Any) -> dict[str, Any]:
     if not isinstance(payload, dict) or not isinstance(payload.get("rateLimits"), dict):
         raise CollectionError("invalid_codex_limits")
     rates = payload["rateLimits"]
@@ -167,7 +168,7 @@ def codex_snapshot(payload: Any) -> dict:
     }
 
 
-def atomic_json(target: Path, payload: dict) -> None:
+def atomic_json(target: Path, payload: dict[str, Any]) -> None:
     parent = target.parent.absolute()
     if parent.resolve() != parent or target.is_symlink():
         raise CollectionError("unsafe_state_path")
@@ -189,7 +190,7 @@ def atomic_json(target: Path, payload: dict) -> None:
 SUBSCRIPTION_IDS = ("claude", "codex", "gemini", "grok", "muse")
 
 
-def read_settings(target: Path) -> dict:
+def read_settings(target: Path) -> dict[str, Any]:
     """Keep other user settings when one section changes; never follow a symlink."""
     if target.is_symlink():
         raise CollectionError("unsafe_state_path")
@@ -206,28 +207,37 @@ def read_settings(target: Path) -> dict:
     return settings
 
 
-def update_settings(target: Path, section: str, key: str | None, values: dict) -> None:
+def update_settings(
+    target: Path, section: str, key: str | None, values: dict[str, Any]
+) -> None:
     settings = read_settings(target)
-    current = settings.get(section) if isinstance(settings.get(section), dict) else {}
+    existing = settings.get(section)
+    current: dict[str, Any] = existing if isinstance(existing, dict) else {}
     if key is None:
         current.update(values)
     else:
-        row = current.get(key) if isinstance(current.get(key), dict) else {}
+        existing_row = current.get(key)
+        row: dict[str, Any] = existing_row if isinstance(existing_row, dict) else {}
         row.update(values)
         current[key] = row
     settings[section] = current
     atomic_json(target, settings)
 
 
-def rpc_result(process: subprocess.Popen, request_id: int, deadline: float) -> dict:
+def rpc_result(
+    process: subprocess.Popen[bytes], request_id: int, deadline: float
+) -> dict[str, Any]:
+    stdout = process.stdout
+    if stdout is None:  # read_codex always opens stdout as a pipe
+        raise CollectionError("codex_connection_closed")
     total = 0
     buffer = b""
     with selectors.DefaultSelector() as selector:
-        selector.register(process.stdout, selectors.EVENT_READ)
+        selector.register(stdout, selectors.EVENT_READ)
         while time.monotonic() < deadline:
             if not selector.select(max(0, deadline - time.monotonic())):
                 break
-            chunk = os.read(process.stdout.fileno(), 65536)
+            chunk = os.read(stdout.fileno(), 65536)
             if not chunk:
                 raise CollectionError("codex_connection_closed")
             total += len(chunk)
@@ -245,11 +255,12 @@ def rpc_result(process: subprocess.Popen, request_id: int, deadline: float) -> d
                         response.get("result"), dict
                     ):
                         raise CollectionError("codex_usage_unavailable")
-                    return response["result"]
+                    result: dict[str, Any] = response["result"]
+                    return result
     raise CollectionError("codex_timeout")
 
 
-def read_codex(binary: str | None = None, timeout: float = 20) -> dict:
+def read_codex(binary: str | None = None, timeout: float = 20) -> dict[str, Any]:
     executable = binary or os.environ.get("AI_USAGE_CODEX_BIN") or shutil.which("codex")
     if not executable:
         raise CollectionError("codex_not_installed")
@@ -275,9 +286,12 @@ def read_codex(binary: str | None = None, timeout: float = 20) -> dict:
         raise CollectionError("codex_not_installed") from None
     try:
 
-        def send(value: dict):
-            process.stdin.write((json.dumps(value) + "\n").encode())
-            process.stdin.flush()
+        def send(value: dict[str, Any]) -> None:
+            stdin = process.stdin
+            if stdin is None:  # always a pipe, see Popen above
+                raise CollectionError("codex_connection_closed")
+            stdin.write((json.dumps(value) + "\n").encode())
+            stdin.flush()
 
         send(
             {
@@ -357,11 +371,9 @@ def ingest_claude(directory: Path, *, passthrough: str | None = None) -> None:
     if passthrough:
         # This exact pre-existing command is supplied by the local installer,
         # never by an HTTP request or provider JSON.
-        try:
+        with contextlib.suppress(OSError, subprocess.TimeoutExpired):
             # nosemgrep: python.lang.security.audit.subprocess-shell-true.subprocess-shell-true -- passthrough is the user's existing statusline command written by the local installer, never request or provider data
             subprocess.run(passthrough, shell=True, input=raw, timeout=5, check=False)
-        except (OSError, subprocess.TimeoutExpired):
-            pass
 
 
 def install_claude(settings_path: Path, fallback_path: Path | None) -> None:
@@ -436,7 +448,7 @@ def parse_iso(value: Any) -> datetime | None:
 
 
 def render_status(
-    snapshots: dict[str, dict | None], now: datetime, *, color: bool = False
+    snapshots: dict[str, dict[str, Any] | None], now: datetime, *, color: bool = False
 ) -> str:
     """Human-readable quota table; reads only the allowlisted snapshot fields."""
 
@@ -447,7 +459,7 @@ def render_status(
     for provider, title in (("claude", "Claude"), ("codex", "Codex")):
         snapshot = snapshots.get(provider)
         windows = snapshot.get("windows") if isinstance(snapshot, dict) else None
-        if not windows:
+        if not isinstance(snapshot, dict) or not windows:
             hint = "install-claude" if provider == "claude" else "codex"
             lines.append(
                 f"{title:<7} {paint('not connected', '2')} (run: collector.py {hint})"
@@ -487,7 +499,7 @@ def render_status(
     return "\n".join(lines)
 
 
-def read_snapshot(path: Path) -> dict | None:
+def read_snapshot(path: Path) -> dict[str, Any] | None:
     try:
         if path.is_symlink() or path.stat().st_size > MAX_BYTES:
             return None
@@ -551,10 +563,9 @@ def main() -> int:
     directory = args.state_dir or state_dir()
     if args.command == "status":
         if not args.offline and shutil.which("codex"):
-            try:
+            # On failure, fall back to the last stored snapshot.
+            with contextlib.suppress(CollectionError, ValueError, OSError):
                 atomic_json(directory / "codex.json", read_codex())
-            except (CollectionError, ValueError, OSError):
-                pass  # Fall back to the last stored snapshot.
         snapshots = {
             provider: read_snapshot(directory / f"{provider}.json")
             for provider in ("claude", "codex")

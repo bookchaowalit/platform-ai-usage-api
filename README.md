@@ -75,8 +75,12 @@ The field reference is in the [AI Usage v1 contract](contracts/ai-usage.v1.md). 
 ## Tests
 
 ```bash
-PYTHONPATH=vendor/service-auth:. uv run --no-project --with pytest --with 'pyjwt[crypto]' python -m pytest tests
+uv sync --frozen --all-extras   # versions from uv.lock, vendored service-auth included
+uvx ruff@0.17.1 check . && uvx ruff@0.17.1 format --check . && uv run mypy . && uv run python -m pytest -q
 ```
+
+CI (`.github/workflows/ci.yml`) runs the same checks and fails below the coverage threshold.
+Sentry error reporting in `server.py` is opt-in: it stays off unless `SENTRY_DSN` is set.
 
 ## License
 

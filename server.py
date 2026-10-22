@@ -16,6 +16,7 @@ from urllib.parse import urlsplit
 
 from service_auth import AuthError, AuthPolicy, check_read_auth, is_loopback, readiness
 
+from error_reporting import capture, init_sentry
 from model import SCHEMA_VERSION, UsageStore, utc_iso
 
 SERVICE_NAME = "solo-empire-ai-usage-api"
@@ -114,7 +115,8 @@ class AiUsageApi:
             return Response(
                 exc.status, {"error": {"code": exc.code, "message": exc.message}}
             )
-        except Exception:  # noqa: BLE001 - never leak exception text; answer a generic 500
+        except Exception as exc:  # noqa: BLE001 - never leak exception text; answer a generic 500
+            capture(exc)  # no-op unless SENTRY_DSN is set
             return Response(
                 500,
                 {
@@ -207,6 +209,7 @@ def main() -> None:
         help="sanitized snapshots; defaults to AI_USAGE_STATE_DIR",
     )
     args = parser.parse_args()
+    init_sentry()  # no-op unless SENTRY_DSN is set
     if not 1 <= args.port <= 65535:
         parser.error("--port must be between 1 and 65535")
     AiUsageRequestHandler.api = AiUsageApi(args.state_dir)

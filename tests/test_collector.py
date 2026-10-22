@@ -10,6 +10,8 @@ import pytest
 SPEC = importlib.util.spec_from_file_location(
     "collector", Path(__file__).parents[1] / "collector.py"
 )
+assert SPEC is not None
+assert SPEC.loader is not None
 collector = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(collector)
 
@@ -299,7 +301,8 @@ def test_status_renders_fresh_stale_and_missing_providers():
     assert "5-hour   ██████░░░░   62% left · resets in 2h 14m" in text
     assert "weekly   reset since last check" in text
     assert "Codex   not connected" in text
-    assert "stale" not in text and "\033[" not in text
+    assert "stale" not in text
+    assert "\033[" not in text
     stale = collector.render_status(
         {
             "codex": {
@@ -342,4 +345,6 @@ def test_status_command_reads_stored_snapshots_offline(tmp_path, monkeypatch, ca
     )
     assert collector.main() == 0
     out = capsys.readouterr().out
-    assert "Claude  not connected" in out and "10% left" in out and "stale" in out
+    assert "Claude  not connected" in out
+    assert "10% left" in out
+    assert "stale" in out

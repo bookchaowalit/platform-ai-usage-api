@@ -7,15 +7,75 @@ name = "solo-empire-ai-usage-api"
 version = "0.1.0"
 description = "Read-only local projection of Claude and Codex subscription usage"
 requires-python = ">=3.11"
-dependencies = ["solo-empire-service-auth>=0.1.0,<0.2"]
+# collector.py stays standard-library only; these are for the HTTP API (server.py).
+dependencies = [
+    "solo-empire-service-auth>=0.1.0,<0.2",
+    "sentry-sdk>=2.72,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-cov>=7",
+    "mypy>=2.4",
+]
 
 [tool.setuptools]
-py-modules = ["server", "model", "collector"]
+py-modules = ["server", "model", "collector", "error_reporting"]
 
-[tool.ruff]
-# Vendored copy of bookchaowalit/platform-auth-sdk: "do not edit here" (vendor/service-auth/README.md).
-extend-exclude = ["vendor"]
+# solo-empire-service-auth is not on PyPI: the lock resolves it from the vendored copy, as the
+# Dockerfile installs it.
+[tool.uv.sources]
+solo-empire-service-auth = { path = "vendor/service-auth" }
 
 [tool.coverage.run]
 # Measure only this service's modules, not tests or the vendored SDK (CI coverage gate, ADR-0004).
-source = ["server", "model", "collector"]
+source = ["server", "model", "collector", "error_reporting"]
+
+[tool.ruff]
+# collector.py is documented as a single Python 3.11+ file (requires-python >=3.11).
+target-version = "py311"
+# Vendored copy of bookchaowalit/platform-auth-sdk: "do not edit here" (vendor/service-auth/README.md).
+extend-exclude = ["vendor"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W", "F", "I", "B", "BLE", "UP", "C4", "SIM", "RUF", "PIE", "PT", "RET", "ISC",
+    "PERF", "LOG", "G", "FURB",
+]
+# ruff format wraps code at 88; what stays longer are noqa justifications, which must sit on
+# the flagged line.
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.12"
+files = ["server.py", "model.py", "collector.py", "error_reporting.py", "tests"]
+# CI runs `mypy .`; the vendored SDK is checked in its canonical repo, not here.
+exclude = ["^vendor/", "^build/"]
+strict_equality = true
+warn_redundant_casts = true
+warn_unused_configs = true
+warn_unused_ignores = true
+
+# Service code: mypy --strict (the global-only strict flags are set above). tests/ stays gradual:
+# its test methods are unannotated, so mypy checks only their call sites.
+[[tool.mypy.overrides]]
+module = ["server", "model", "collector", "error_reporting"]
+check_untyped_defs = true
+disallow_any_generics = true
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+no_implicit_reexport = true
+warn_return_any = true
+
+# The vendored SDK ships no py.typed marker; its annotations are still worth checking calls against.
+[[tool.mypy.overrides]]
+module = ["service_auth"]
+follow_untyped_imports = true
+
+[tool.ruff.lint.per-file-ignores]
+# The suites are unittest.TestCase classes (pytest collects them); their self.assert* calls stay.
+"tests/*" = ["PT009", "PT027"]

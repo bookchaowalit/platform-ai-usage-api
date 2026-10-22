@@ -23,7 +23,10 @@ from service_auth import AuthPolicy
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from server import AiUsageApi, AiUsageRequestHandler
+from server import (  # noqa: E402 - imported after the repository root is put on sys.path
+    AiUsageApi,
+    AiUsageRequestHandler,
+)
 
 
 class AiUsageServerTest(unittest.TestCase):

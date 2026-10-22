@@ -19,10 +19,11 @@ jobs:
     uses: bookchaowalit/platform-ci-workflows/.github/workflows/ci-python.yml@87dc5e1c7e0416886a6371d5a101bb2ccba38edd # v1.1.1
     with:
       python-version: "3.12" # matches the python:3.12-slim runtime image
-      # solo-empire-service-auth is not on PyPI: install the vendored copy first, as the Dockerfile does.
-      install-command: uv pip install ./vendor/service-auth -e . pytest
+      # Install is auto: uv.lock -> uv sync --frozen --all-extras, which takes the vendored
+      # solo-empire-service-auth from vendor/service-auth ([tool.uv.sources]), as the Dockerfile does.
       # pytest (auto) also collects the vendored package's tests under vendor/service-auth/tests.
-      # Coverage gate (TDD + SDD standard, ADR-0004). Baseline 2026-10-21: 82.96% total, rounded down. Ratchet up, never lower.
+      # Coverage gate (TDD + SDD standard, ADR-0004; first set 2026-10-21 at 82, never lower).
+      # Ratchet: measured 84.01% on 2026-10-22 (threshold = measured - 2); raise it as tests grow.
       coverage-threshold: "82"
 
   security:

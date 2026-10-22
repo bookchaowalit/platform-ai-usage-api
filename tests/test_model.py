@@ -14,7 +14,12 @@ from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from model import MAX_SNAPSHOT_BYTES, SNAPSHOT_SCHEMA_VERSION, UsageStore, utc_iso
+from model import (  # noqa: E402 - imported after the repository root is put on sys.path
+    MAX_SNAPSHOT_BYTES,
+    SNAPSHOT_SCHEMA_VERSION,
+    UsageStore,
+    utc_iso,
+)
 
 NOW = datetime(2026, 10, 4, 18, 0, tzinfo=UTC)
 

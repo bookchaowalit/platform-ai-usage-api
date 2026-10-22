@@ -194,7 +194,8 @@ def read_snapshot(state_dir: Path, provider: str) -> dict[str, Any] | None:
                 raise ValueError("snapshot too large")
         raw = json.loads(encoded, object_pairs_hook=_unique_object)
         if not isinstance(raw, dict):
-            raise ValueError("invalid snapshot object")  # noqa: TRY004 - read_snapshot reports every malformed snapshot as ValueError
+            # ValueError, not TypeError: read_snapshot reports every malformed snapshot as ValueError.
+            raise ValueError("invalid snapshot object")
         return raw
     finally:
         os.close(directory)
