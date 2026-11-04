@@ -18,7 +18,7 @@ flowchart LR
   end
   subgraph External
     SEN["Sentry, optional"]
-    DASH["Dashboard consumer: owner-web or ai-usage-display relay"]
+    DASH["Dashboard consumer: owner-web"]
   end
   subgraph Build_time["Build and CI"]
     GH["GitHub Actions"]

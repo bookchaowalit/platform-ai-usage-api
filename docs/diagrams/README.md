@@ -47,7 +47,7 @@ repo นี้คือ **ai-usage**: `collector.py` (CLI standard library เ�
 
 ## Open questions for the owner (รวม)
 
-1. Dashboard / relay ที่อ่าน API จริง: `owner-web` หรือ `ai-usage-display` บน Railway และ relay เข้าถึง API ที่ bind loopback อย่างไร (01, 05, 12, 16)
+1. ยืนยันว่า `owner-web` เป็น consumer เดียวของ API (relay `ai-usage-display` เป็น push mode ไม่ได้อ่าน API, ดู 16) (01, 05, 12)
 2. Sentry DSN ตั้งให้ local units หรือไม่ (05, 20)
 3. Docker image รันที่ไหนหรือไม่ (06, 16)
 4. JWT issuer จริงและมี client ใช้ production mode หรือไม่ (02, 12)

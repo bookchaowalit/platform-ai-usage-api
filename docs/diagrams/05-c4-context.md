@@ -7,7 +7,7 @@ C4Context
   System(aiusage, "ai-usage", "collector.py CLI and server.py read-only API on the owner machine")
   System_Ext(claude, "Claude Code", "Status line callback JSON on stdin")
   System_Ext(codex, "Codex CLI app-server", "Local JSON-RPC over stdio, account/rateLimits/read")
-  System_Ext(dash, "Dashboard client", "owner-web or display relay, reads GET /api/v1/ai-usage")
+  System_Ext(dash, "Dashboard client", "owner-web, reads GET /api/v1/ai-usage")
   System_Ext(issuer, "JWT issuer", "Issues owner-scoped RS256 tokens, public key configured locally")
   System_Ext(sentry, "Sentry", "Errors only, opt-in via SENTRY_DSN")
   Rel(owner, aiusage, "status, install-claude, configure-*")
@@ -24,5 +24,5 @@ Sources: `README.md`, `PRODUCT.md` (Users, Operating Context), `collector.py` (`
 
 ## Open questions
 
-- Dashboard client ที่ใช้งานจริง: `owner-web` (`docs/OWNER.th.md`) หรือ relay `ai-usage-display` (PRODUCT.md, `[ต้องยืนยัน]`)
+- Dashboard client ที่ใช้งานจริง: `owner-web` (`docs/OWNER.th.md`); relay `ai-usage-display` ไม่ได้อ่าน API นี้ แต่รับ snapshot ที่ `platform-ai-usage-display` push ไป (ดู 16-deployment)
 - Sentry DSN ตั้งไว้กับ local units หรือไม่ (PRODUCT.md `[ต้องยืนยัน]`)

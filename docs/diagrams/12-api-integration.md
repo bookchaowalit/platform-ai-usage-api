@@ -59,4 +59,4 @@ Sources: `server.py`, `collector.py`, `error_reporting.py`, `vendor/service-auth
 
 ## Open questions
 
-- consumer จริงของ API (owner-web / ai-usage-display relay) และวิธีที่ relay ได้ token
+- ยืนยันว่า `owner-web` เป็น consumer เดียวของ API (relay `ai-usage-display` รับ push ไม่ได้เรียก API)
