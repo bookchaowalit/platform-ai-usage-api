@@ -41,5 +41,5 @@ Sources: `systemd/solo-ai-usage-api.service`, `systemd/solo-ai-usage-collector.s
 
 ## Open questions
 
-- relay `ai-usage-display` บน Railway (PRODUCT.md อ้าง registry) อ่าน API นี้อย่างไรเมื่อ API bind แค่ loopback — ไม่อยู่ใน repo
+- relay `ai-usage-display` บน Railway ไม่ได้อ่าน API นี้ (ตรวจ 2026-11-04): เป็น push mode จาก `relay-push.mjs` ของ `platform-ai-usage-display`; ยังไม่รู้ว่า pusher รันบนเครื่องไหน (ไม่ใช่ WSL นี้หรือ Windows host)
 - Docker image ถูก build / รันที่ไหนหรือไม่

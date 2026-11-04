@@ -13,8 +13,11 @@ api (plus a standard-library CLI, `collector.py`)
 - Claude Code itself: the `claude-statusline` hook feeds Claude's status-line JSON to the
   collector, which saves a snapshot and prints a short quota line.
 - A local web dashboard or small device display that reads `GET /api/v1/ai-usage` (default CORS
-  origins `http://127.0.0.1:3600` and `http://localhost:3600`). Which dashboard and which relay
-  read it today: [ต้องยืนยัน] (the registry names an `ai-usage-display` relay on Railway).
+  origins `http://127.0.0.1:3600` and `http://localhost:3600`). Which dashboard reads it today:
+  [ต้องยืนยัน]. The Railway `ai-usage-display` relay does not read this API: it runs
+  `RELAY_MODE=server` and serves snapshots pushed by `scripts/relay-push.mjs` of
+  `platform-ai-usage-display` (checked 2026-11-04: POST `/api/relay/snapshot` 200 about every
+  67 s from the owner's public IP; the pusher is not a process in this WSL or on the Windows host).
 
 ## Product Purpose
 
