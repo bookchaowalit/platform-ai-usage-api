@@ -7,7 +7,7 @@
 ## systemd (user units) บนเครื่องนี้
 
 `~/.config/systemd/user/solo-ai-usage-api.service` และ `solo-ai-usage-collector.service` ชี้มาที่ checkout นี้
-(`.../private/ai-usage`, `PYTHONPATH=<checkout>/vendor/service-auth`). ตัวอย่างใน `systemd/` ของ repo นี้ (แก้ `/opt/solo-ai-usage` เป็น path ของ checkout).
+(`~/solo-empire/projects/product/engineering/book-dev/github/bookchaowalit/public/book-ai/platform-ai-usage-api`, รันด้วย `.venv/bin/python`, `PYTHONPATH=<checkout>/vendor/service-auth`; ติดตั้งใหม่ 2026-11-04 หลังพบว่า unit หายไป). ตัวอย่างใน `systemd/` ของ repo นี้ (แก้ `/opt/solo-ai-usage` เป็น path ของ checkout).
 เปลี่ยนที่ตั้งแล้วให้รัน `systemctl --user daemon-reload && systemctl --user restart solo-ai-usage-api solo-ai-usage-collector`.
 Claude statusLine hook (`.claude/settings.local.json` ของ solo-empire) เรียก `<checkout>/collector.py claude-statusline`.
 
