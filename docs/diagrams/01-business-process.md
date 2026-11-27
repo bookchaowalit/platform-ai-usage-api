@@ -2,6 +2,8 @@
 
 ระบบนี้คือ **ai-usage**: CLI (`collector.py`, standard library เท่านั้น) + HTTP API แบบ read-only (`server.py`) ที่รันในเครื่องของเจ้าของ (local-first, systemd user units) เพื่อตอบคำถามเดียว: "โควตา Claude / Codex เหลือเท่าไร รีเซ็ตเมื่อไร และค่า AI รายเดือนคุ้มไหม" โดยไม่ใช้โควตาเอง ไม่เก็บ prompt / reply / account id / credential
 
+Last reviewed: 2026-11-27 · commit `3971301`
+
 ## As-Is (จาก code วันนี้)
 
 ```mermaid
@@ -42,17 +44,20 @@ flowchart TD
 
 Sources: `collector.py` (`ingest_claude`, `read_codex`, `main`, `update_settings`), `server.py` (`AiUsageApi.handle`), `model.py` (`UsageStore.snapshot`, `window_alerts`, `project_roi`), `systemd/solo-ai-usage-collector.service`, `PRODUCT.md`, `contracts/ai-usage.v1.md`
 
-## To-Be
+## To-Be (ไม่มีที่เขียนไว้)
 
-ไม่มี `docs/UPGRADE-PLAN.md` และ `specs/` มีเพียง SPEC-001 (CI coverage gate) และ SPEC-002 (L2 baseline: lock, mypy, Ruff, Sentry) ซึ่งเป็นงาน tooling ไม่เปลี่ยน business process สิ่งที่ repo docs ระบุว่า "ยังไม่ทำ" (out of scope ใน `PRODUCT.md`):
+ไม่มี To-Be ที่เขียนไว้ — ไม่มี `docs/UPGRADE-PLAN.md`, ไม่มี ADR/roadmap และ `specs/` มีเพียง SPEC-001 (CI coverage gate) กับ SPEC-002 (L2 baseline) ซึ่งเป็นงาน tooling ไม่เปลี่ยน business process
+`PRODUCT.md` ระบุสิ่งที่ "ไม่ทำ" (out of scope: billed API spend, quota ของ Gemini/Grok/Muse, write route) ซึ่งเป็นขอบเขตปัจจุบัน ไม่ใช่เป้าหมายที่ตกลงแล้ว จึงไม่วาด To-Be
 
-- billed API spend (`api_billed_cost_usd` เป็น `null` เสมอ)
-- quota collector ของ Gemini, Grok, Muse (ตอนนี้เป็น cost-only)
-- write route ใด ๆ
+Sources: `PRODUCT.md` (Constraints, Measures), `specs/README.md`, `specs/001-coverage-gate/spec.md`, `specs/002-l2-baseline/spec.md`
 
-Sources: `PRODUCT.md` (Capabilities and Constraints), `specs/README.md`, `specs/001-coverage-gate/spec.md`, `specs/002-l2-baseline/spec.md`, `DOCPACK/00-product-card.md` §8
+## Gap
+
+| ID | As-Is → To-Be | Status | Owner | Evidence |
+|---|---|---|---|---|
+| G1 | ไม่มี To-Be ที่เขียนไว้ → owner กำหนดว่าจะเพิ่ม quota collector ของ Gemini / Grok / Muse หรือ billed API spend หรือไม่ | decide | owner | `PRODUCT.md` out of scope; ไม่มี spec หรือ ADR |
 
 ## Open questions
 
-- To-Be process: ไม่มีเอกสารแผน จะเพิ่ม collector ของ Gemini / Grok / Muse หรือ billed API spend หรือไม่
-- dashboard ตัวไหนอ่าน API อยู่จริงวันนี้ (`PRODUCT.md` ระบุ `[ต้องยืนยัน]`; `docs/OWNER.th.md` บอก `owner-web` / `bookchaowalit/life-dashboard-web`; registry ระบุ relay `ai-usage-display` บน Railway)
+- dashboard ตัวไหนอ่าน `GET /api/v1/ai-usage` จริงวันนี้ (`PRODUCT.md` ระบุ `[ต้องยืนยัน]`); `PRODUCT.md` ระบุว่า relay `ai-usage-display` บน Railway **ไม่ได้** อ่าน API นี้ (รับ snapshot ที่ push เข้ามาเอง) ส่วน `docs/OWNER.th.md` ระบุ `owner-web` / `bookchaowalit/life-dashboard-web`
+- image `Dockerfile` รันที่ไหนจริงหรือไม่ และ local units ตั้ง Sentry DSN หรือไม่ (`PRODUCT.md` [ต้องยืนยัน])
